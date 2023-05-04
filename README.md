@@ -1,1 +1,1 @@
-# Machine Learning for Esop question awsering using bert pretrainde model
+# Machine Learning for Esop question awsering using bert pretrained model
