@@ -16,8 +16,6 @@ from datasets import Dataset
 # from utility.dataset import custom_datasets
 warnings.simplefilter("ignore")
 
-
-
 h = {
     "train" : {
         "loss" : [],
@@ -54,7 +52,6 @@ eval_dataloader = DataLoader(
     val_dataset, collate_fn=default_data_collator, batch_size=config["batch_size"]
 )
 
-# model = DistilBertForQuestionAnswering.from_pretrained(checkpoint)
 model = AutoModelForQuestionAnswering.from_pretrained(checkpoint)
 
 model = model.to(device)
@@ -201,11 +198,10 @@ for epoch in range(epochs):
 
 
     # calculating metrics
-    # answers,metrics_ = predict_answers_and_evaluate(start_logits,end_logits,validation_processed_dataset,dataset["validation"])
-    # print(f'Exact match: {metrics_["exact_match"]}, F1 score: {metrics_["f1"]}')
+    if config["calculate_score"] :
+        answers,metrics_ = predict_answers_and_evaluate(start_logits,end_logits,validation_processed_dataset,dataset["validation"])
+        print(f'Exact match: {metrics_["exact_match"]}, F1 score: {metrics_["f1"]}')
 
-    # print('answers')
-    # print(answers)
     print('')
     
     # Measure how long the validation run took.

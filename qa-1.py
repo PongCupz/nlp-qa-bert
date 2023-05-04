@@ -10,7 +10,7 @@ warnings.simplefilter("ignore")
 # tokenizer = AutoTokenizer.from_pretrained(weight_path)
 # model = AutoModelForQuestionAnswering.from_pretrained(weight_path)
 
-tokenizer = DistilBertTokenizer.from_pretrained("models/tokenizer/")
+tokenizer = AutoTokenizer.from_pretrained("models/tokenizer/")
 model = AutoModelForQuestionAnswering.from_pretrained("models/tokenizer/")
 
 n = 1

@@ -4,7 +4,8 @@ config = {
     # "checkpoint" : "bert-large-uncased-whole-word-masking-finetuned-squad",
     "batch_size" : 2,
     "epochs" : 20,
-    "seed_val": 42
+    "seed_val": 42,
+    "calculate_score": False
 }
 
 # Loss function

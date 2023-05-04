@@ -7,8 +7,7 @@ from transformers import AutoTokenizer
 import torch.nn.functional as F
 from config import config
 
-trained_checkpoint = config["checkpoint"]
-tokenizer = AutoTokenizer.from_pretrained(trained_checkpoint)
+tokenizer = AutoTokenizer.from_pretrained(config["checkpoint"])
 
 def train_data_preprocess(examples):
     
