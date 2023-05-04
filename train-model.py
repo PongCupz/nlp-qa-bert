@@ -11,16 +11,12 @@ from transformers import AdamW
 from utility.train import  train
 from utility.DataQA import DataQA
 from utility.utils import format_time, predict_answers_and_evaluate, preprocess_validation_examples, qa_loss_fn
-
+from config import config, loss_config
 from datasets import Dataset
-from utility.dataset import custom_datasets
-# warnings.simplefilter("ignore")
+# from utility.dataset import custom_datasets
+warnings.simplefilter("ignore")
 
-# Loss function
-loss_config = {
-    "smoothing": False,
-    "eps": 0.1,
-}
+
 
 h = {
     "train" : {
@@ -30,34 +26,32 @@ h = {
         "loss" : [],
     }
 }
-epochs = 20
+epochs = config["epochs"]
 
-# checkpoint = "distilbert-base-uncased"
-checkpoint = "bert-large-uncased"
-# checkpoint = "bert-large-uncased-whole-word-masking-finetuned-squad"
+checkpoint = config["checkpoint"]
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 #lets sample a small dataset
 dataset = load_dataset("squad")
-dataset['train'] = dataset['train'].select([i for i in range(30)])
-dataset['validation'] = dataset['validation'].select([i for i in range(5)])
+dataset['train'] = dataset['train'].select([i for i in range(8000)])
+dataset['validation'] = dataset['validation'].select([i for i in range(2000)])
 
 # dataset = custom_datasets
 
 
-train_dataset = DataQA(custom_datasets,mode="train")
-val_dataset = DataQA(custom_datasets,mode="validation")
+train_dataset = DataQA(dataset,mode="train")
+val_dataset = DataQA(dataset,mode="validation")
 
 train_dataloader = DataLoader(
     train_dataset,
     shuffle=True,
     collate_fn=default_data_collator,
-    batch_size=15,
+    batch_size=config["batch_size"],
 )
 eval_dataloader = DataLoader(
-    val_dataset, collate_fn=default_data_collator, batch_size=5
+    val_dataset, collate_fn=default_data_collator, batch_size=config["batch_size"]
 )
 
 # model = DistilBertForQuestionAnswering.from_pretrained(checkpoint)
@@ -79,7 +73,7 @@ validation_processed_dataset = dataset["validation"].map(
 )
 
 # to reproduce results
-seed_val = 42
+seed_val = config["seed_val"]
 random.seed(seed_val)
 np.random.seed(seed_val)
 torch.manual_seed(seed_val)
@@ -204,22 +198,25 @@ for epoch in range(epochs):
 
     start_logits = np.concatenate(start_logits)
     end_logits = np.concatenate(end_logits)
-    # start_logits = start_logits[: len(val_dataset)]
-    # end_logits = end_logits[: len(val_dataset)]
 
 
     # calculating metrics
-    answers,metrics_ = predict_answers_and_evaluate(start_logits,end_logits,validation_processed_dataset,dataset["validation"])
-    print(f'Exact match: {metrics_["exact_match"]}, F1 score: {metrics_["f1"]}')
+    # answers,metrics_ = predict_answers_and_evaluate(start_logits,end_logits,validation_processed_dataset,dataset["validation"])
+    # print(f'Exact match: {metrics_["exact_match"]}, F1 score: {metrics_["f1"]}')
 
-    print('answers')
-    print(answers)
+    # print('answers')
+    # print(answers)
     print('')
     
     # Measure how long the validation run took.
     validation_time = format_time(time.time() - t0)
 
     print("  Validation took: {:}".format(validation_time))
+
+    if epoch > 1:
+        print(abs(h['train']["loss"][epoch] - h['train']["loss"][epoch -1]) / h['train']["loss"][epoch -1])
+        if abs(h['train']["loss"][epoch] - h['train']["loss"][epoch -1]) / h['train']["loss"][epoch -1] < 0.001 :
+            break
 
 tokenizer.save_pretrained("models/tokenizer/")
 model.save_pretrained("models/tokenizer/")

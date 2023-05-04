@@ -5,9 +5,9 @@ import evaluate
 import torch
 from transformers import AutoTokenizer
 import torch.nn.functional as F
+from config import config
 
-# trained_checkpoint = "distilbert-base-uncased"
-trained_checkpoint = "bert-large-uncased"
+trained_checkpoint = config["checkpoint"]
 tokenizer = AutoTokenizer.from_pretrained(trained_checkpoint)
 
 def train_data_preprocess(examples):
