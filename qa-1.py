@@ -1,17 +1,15 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, RobertaTokenizer, DistilBertTokenizer
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import warnings
 from utility.dataset import custom_dataset
 warnings.simplefilter("ignore")
 
 # weight_path = "kaporter/bert-base-uncased-finetuned-squad"
 # weight_path = "bert-large-uncased-whole-word-masking-finetuned-squad"
+weight_path = "models/tokenizer-2/"
 
-# tokenizer = AutoTokenizer.from_pretrained(weight_path)
-# model = AutoModelForQuestionAnswering.from_pretrained(weight_path)
-
-tokenizer = AutoTokenizer.from_pretrained("models/tokenizer/")
-model = AutoModelForQuestionAnswering.from_pretrained("models/tokenizer/")
+tokenizer = AutoTokenizer.from_pretrained(weight_path)
+model = AutoModelForQuestionAnswering.from_pretrained(weight_path)
 
 n = 1
 for item in custom_dataset :

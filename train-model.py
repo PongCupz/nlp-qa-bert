@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 import matplotlib.pyplot as plt
 
-from transformers import AutoTokenizer, DistilBertForQuestionAnswering, default_data_collator, AutoModelForQuestionAnswering
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering, default_data_collator
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 from transformers import AdamW
@@ -213,6 +213,9 @@ for epoch in range(epochs):
         print(abs(h['train']["loss"][epoch] - h['train']["loss"][epoch -1]) / h['train']["loss"][epoch -1])
         if abs(h['train']["loss"][epoch] - h['train']["loss"][epoch -1]) / h['train']["loss"][epoch -1] < 0.001 :
             break
+    
+    tokenizer.save_pretrained("models/step-tokenizer/")
+    model.save_pretrained("models/step-tokenizer/")
 
 tokenizer.save_pretrained("models/tokenizer/")
 model.save_pretrained("models/tokenizer/")
