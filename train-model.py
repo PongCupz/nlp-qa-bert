@@ -73,11 +73,6 @@ np.random.seed(seed_val)
 torch.manual_seed(seed_val)
 torch.cuda.manual_seed_all(seed_val)
 
-
-#storing all training and validation stats
-stats = []
-
-
 #to measure total training time
 total_train_time_start = time.time()
 
