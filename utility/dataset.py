@@ -3,6 +3,44 @@ from datasets import Dataset
 custom_dataset = []
 Context = {}
 
+def find_answer_start(context,answer):
+    start_aswer = 0
+    ans = answer.split()
+    cw = []
+    found_ans = ""
+    for item in ans:
+        cw.append(item)
+        if len(cw) > 1 :
+            x = " ".join(cw)
+        else: 
+            x = item
+
+        n = context.find(x)
+        if n != -1 :
+            start_aswer = n
+            found_ans = x
+    return start_aswer,found_ans
+
+def answer_start(context,answer):
+    answer = answer.lower()
+    answer = answer.replace(".", "")
+    max_len = 0
+    result_ans = 0
+    while True :
+        start_aswer,found_ans = find_answer_start(context.lower(),answer)
+
+        if len(found_ans.split()) > max_len :
+            result_ans = start_aswer
+
+        if answer == found_ans :
+            break
+        if answer.find(' ') != -1 :
+            answer = answer.split(' ', 1)[1]
+        else :
+            break
+
+    return result_ans
+
 ### 1
 Context["TheGrasshopper"] = '''One bright day in late autumn a family of Ants were bustling about in the warm sunshine, drying out the grain they had stored up during the summer, when a starving Grasshopper, his fiddle under his arm, came up and humbly begged for a bite to eat.
 "What!" cried the Ants in surprise, "haven't you stored anything away for the winter? What in the world were you doing all last summer?"
@@ -126,7 +164,7 @@ answers = [
     "King Log and the Crane.","They had too much freedom.","Be sure you can better your condition before you seek to change.",
     "the forest","The Mouse begged the Lion to spare her.","The Lion was caught in the toils of a hunter's net.",
     "The young Frog was crushed by the Ox.","The old Frog puffed herself up.","The old Frog burst.",
-    "The Tortoise and the Hare","The turtoise","he took a nap during the race",
+    "The Tortoise and the Hare","The tortoise","he took a nap during the race",
     "crabs","The mother crab tells her son that he should always walk straight forward","he asks his mother to show him how to walk."
 ]
 for i in range(len(contexts)):
@@ -143,7 +181,7 @@ for item in answers:
 
 answers_start = []
 for i in range(len(contexts)):
-    answers_start.append([contexts[i].find(answers[i])])
+    answers_start.append([answer_start(contexts[i],answers[i])])
 
 _answers = []
 for i in range(len(answers)):
@@ -158,3 +196,33 @@ for i in range(30):
 custom_datasets = {}
 custom_datasets['train'] = Dataset.from_dict({'id':ids[0:25],'title':titles[0:25],'context':contexts[0:25],'question':questions[0:25], 'answers':_answers[0:25]})
 custom_datasets['validation'] = Dataset.from_dict({'id':ids[25:30],'title':titles[25:30],'context':contexts[25:30],'question':questions[25:30], 'answers':_answers[25:30]})
+custom_datasets['all'] = Dataset.from_dict({'id':ids,'title':titles,'context':contexts,'question':questions, 'answers':_answers})
+
+factoid = [1,2,3,4,9,10,11,15,16,18,19,20,21,22,23,24,25,26,29,30]
+nonfactoid = [5,6,7,8,12,13,14,17,27,28]
+
+_ids = []
+_titles = []
+_contexts = []
+_questions = []
+_answer = []
+for i in factoid :
+    _ids.append(ids[i-1])
+    _titles.append(titles[i-1])
+    _contexts.append(contexts[i-1])
+    _questions.append(questions[i-1])
+    _answer.append(_answers[i-1])
+custom_datasets['factoid'] = Dataset.from_dict({'id':_ids,'title':_titles,'context':_contexts,'question':_questions, 'answers':_answer})
+
+_ids = []
+_titles = []
+_contexts = []
+_questions = []
+_answer = []
+for i in nonfactoid :
+    _ids.append(ids[i-1])
+    _titles.append(titles[i-1])
+    _contexts.append(contexts[i-1])
+    _questions.append(questions[i-1])
+    _answer.append(_answers[i-1])
+custom_datasets['nonfactoid'] = Dataset.from_dict({'id':_ids,'title':_titles,'context':_contexts,'question':_questions, 'answers':_answer})

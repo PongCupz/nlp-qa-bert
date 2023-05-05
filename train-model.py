@@ -8,11 +8,9 @@ from torch.utils.data import DataLoader
 from datasets import load_dataset
 from transformers import AdamW
 
-from utility.train import  train
 from utility.DataQA import DataQA
 from utility.utils import format_time, predict_answers_and_evaluate, preprocess_validation_examples, qa_loss_fn
 from config import config, loss_config
-from datasets import Dataset
 # from utility.dataset import custom_datasets
 warnings.simplefilter("ignore")
 
@@ -37,7 +35,6 @@ dataset['train'] = dataset['train'].select([i for i in range(8000)])
 dataset['validation'] = dataset['validation'].select([i for i in range(2000)])
 
 # dataset = custom_datasets
-
 
 train_dataset = DataQA(dataset,mode="train")
 val_dataset = DataQA(dataset,mode="validation")

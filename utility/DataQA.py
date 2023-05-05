@@ -31,9 +31,6 @@ class DataQA(Dataset):
         out['input_ids'] = torch.tensor(example['input_ids'])
         out['attention_mask'] = torch.tensor(example['attention_mask'])
 
-        
-        # if self.mode == "train":
-
         out['start_positions'] = torch.unsqueeze(torch.tensor(example['start_positions']),dim=0)
         out['end_positions'] = torch.unsqueeze(torch.tensor(example['end_positions']),dim=0)
         
